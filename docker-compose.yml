@@ -1,9 +1,35 @@
 version: "3.8"
-
 services:
   jam-splitter:
     build: .
     image: jam-splitter-agent:latest
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - ./output_stems:/home/agentuser/app/output_stems
+      - ./cache.db:/home/agentuser/app/cache.db
+    tty: true
+    stdin_open: true
+
+  jam-splitter-nvidia:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    image: jam-splitter-agent:cuda
+    runtime: nvidia
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - ./output_stems:/home/agentuser/app/output_stems
+      - ./cache.db:/home/agentuser/app/cache.db
+    tty: true
+    stdin_open: true
+
+  jam-splitter-amd:
+    build:
+      context: .
+      dockerfile: Dockerfile.rocm
+    image: jam-splitter-agent:rocm
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
     volumes:
