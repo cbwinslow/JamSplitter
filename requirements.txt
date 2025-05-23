@@ -1,0 +1,5 @@
+langchain>=0.0.300
+openai>=0.27.0
+python-dotenv>=1.0.0
+pytube>=12.1.0
+spleeter>=2.3.0
