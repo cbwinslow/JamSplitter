@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS stems (
+    url TEXT PRIMARY KEY,
+    stems_json TEXT NOT NULL
+);
