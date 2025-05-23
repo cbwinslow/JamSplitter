@@ -1,23 +1,11 @@
 # Dockerfile.rocm ─────────────────────────────────────────────────────
-# Author : ChatGPT for CBW  ✦ 2025-05-23
-# Summary: ROCm-enabled container for AMD GPU acceleration
-# Usage  : docker build -f Dockerfile.rocm -t jam-splitter-agent:rocm .
-# ModLog : 2025-05-23  Initial version
-
-# ROCm base with PyTorch environment
 FROM rocm/pytorch:rocm5.2_ubuntu20.04_py3.8_pytorch_1.13.1
-
-# Create non-root user
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 RUN useradd --create-home agentuser
 WORKDIR /home/agentuser/app
-
-# Copy and install Python deps
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
 COPY . .
 RUN chown -R agentuser:agentuser .
 USER agentuser
-
 ENTRYPOINT ["python3", "main.py"]
