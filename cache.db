@@ -1,4 +1,16 @@
+import sqlite3
+
+# Create cache.db with stems table schema
+db_path = '/mnt/data/cache.db'
+conn = sqlite3.connect(db_path)
+cur = conn.cursor()
+cur.execute("""
 CREATE TABLE IF NOT EXISTS stems (
     url TEXT PRIMARY KEY,
     stems_json TEXT NOT NULL
-);
+)
+""")
+conn.commit()
+conn.close()
+
+print(f"cache.db created with stems table schema at {db_path}")
