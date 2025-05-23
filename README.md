@@ -16,3 +16,23 @@
 +3. Build a **Rich-powered TUI** for interactive control.
 +4. Develop a **web UI** (FastAPI + React) for remote operation.
 +5. Integrate **S3** or **Cloud storage** upload for stem outputs.
+
+
+@@ ## Further Improvements
+-1. Add **AMD GPU** support via Demucs or a GPU-enabled separator.
+-2. Provide a **docker-compose** setup with named volumes & networks.
+-3. Build a **Rich-powered TUI** for interactive control.
+-4. Develop a **web UI** (FastAPI + React) for remote operation.
+-5. Integrate **S3** or **Cloud storage** upload for stem outputs.
++## GPU-Accelerated Containers
++- **NVIDIA**: `docker build -f Dockerfile.cuda -t jam-splitter-agent:cuda .`
++- **AMD ROCm**: `docker build -f Dockerfile.rocm -t jam-splitter-agent:rocm .`
++Use `docker-compose up --build` to start all variants.
++
++## Testing
++- **Unit & E2E**: `pytest`
++- **CLI Integration**: `pytest tests/test_cli_integration.py`
++
++## Coverage
++- Run: `pytest --cov=utils --cov=tests`
++- CI uploads to Codecov for badge reporting.
