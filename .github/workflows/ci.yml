@@ -1,9 +1,4 @@
-# ci.yml ─────────────────────────────────────────────────────────────
-# Summary: Lint and test the JamSplitter agent on pushes and PRs
-# ModLog : 2025-05-23 Initial version
-
 name: CI
-
 on:
   push:
     branches: [ main ]
@@ -13,21 +8,42 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11']
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -r requirements-dev.txt
       - name: Lint with flake8
         run: |
           pip install flake8
           flake8 --max-line-length=88 .
-      - name: Run tests
+      - name: Run pytest with coverage
         run: |
-          pip install pytest
-          pytest
+          pytest --cov=utils --cov=tests --cov-report=term-missing
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+
+  build-nvidia-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build NVIDIA GPU Image
+        run: |
+          docker build -f Dockerfile.cuda -t jam-splitter-agent:cuda .
+
+  build-amd-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build AMD ROCm GPU Image
+        run: |
+          docker build -f Dockerfile.rocm -t jam-splitter-agent:rocm .
