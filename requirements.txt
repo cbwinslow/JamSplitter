@@ -1,5 +1,9 @@
-langchain>=0.0.300
-openai>=0.27.0
-python-dotenv>=1.0.0
-pytube>=12.1.0
-spleeter>=2.3.0
+ langchain>=0.0.300
+ openai>=0.27.0
+ python-dotenv>=1.0.0
+-pytube>=12.1.0
++spleeter>=2.3.0
++yt-dlp>=2025.6.0
+ rich>=13.0.0
++fastapi>=0.100.0
++uvicorn>=0.23.0
