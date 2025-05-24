@@ -1,3 +1,93 @@
+# Python
 __pycache__/
-output_stems/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv
+venv/
+env/
+ENV/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment variables
 .env
+.env.local
+.env.*.local
+
+# Project specific
+output_stems/
+.cache/
+.coverage
+htmlcov/
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+
+# Logs
+logs/
+*.log
+
+# Local development
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Local development
+.venv
+
+# Build artifacts
+*.whl
+*.tar.gz
+
+# Local configuration
+local_settings.py
+db.sqlite3
+
+# Media and static files
+media/
+static/
+
+# Whisper models (can be large)
+*.pt
+*.bin
+*.pth
+*.pkl
+*.h5
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
