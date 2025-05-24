@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: always
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql://user:password@db:5432/jamsplitter
+      - REDIS_URL=redis://:your_redis_password@redis:6379/0
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - db
+      - redis
+    networks:
+      - jamsplitter_network
+    volumes:
+      - ./output_stems:/app/output_stems
+      - ./cache.db:/app/cache.db
+    # Uncomment if you have a GPU
+    # runtime: nvidia
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=jamsplitter
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - jamsplitter_network
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass your_redis_password
+    volumes:
+      - redis_data:/data
+    networks:
+      - jamsplitter_network
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - jamsplitter_network
+    depends_on:
+      - app
+
+networks:
+  jamsplitter_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

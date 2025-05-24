@@ -1,27 +1,97 @@
 """
 test_api.py ─────────────────────────────────────────────────────────────
-Author : ChatGPT for CBW  ✦ 2025-05-24
-Summary: Test suite for JamSplitter API endpoints
-ModLog : 2025-05-24 Initial implementation
+Test suite for JamSplitter API endpoints
 """
 import pytest
 from fastapi.testclient import TestClient
-from app import app
-from utils.logging import Logger
-from utils.monitoring import Metrics
-from utils.test_utils import TestHelper
-import time
+from fastapi import status
+from app.main import app
+
+# Test data
+TEST_VIDEO_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+TEST_FORMAT = "mp3"
 
 @pytest.fixture(scope="module")
 def test_client():
     """Create test client for API endpoints"""
-    client = TestClient(app)
-    return client
+    return TestClient(app)
 
-@pytest.fixture(scope="module")
-def test_data():
-    """Load test data"""
-    return TestHelper.load_test_data("test_data.json")
+def test_health_check(test_client):
+    """Test health check endpoint"""
+    response = test_client.get("/health")
+    assert response.status_code == status.HTTP_200_OK
+    assert "status" in response.json()
+    assert "services" in response.json()
+    assert "database" in response.json()["services"]
+
+def test_process_audio_job(test_client):
+    """Test submitting a new audio processing job"""
+    response = test_client.post(
+        "/api/process",
+        json={"url": TEST_VIDEO_URL, "format": TEST_FORMAT}
+    )
+    assert response.status_code == status.HTTP_202_ACCEPTED
+    data = response.json()
+    assert "job_id" in data
+    assert "status" in data
+    assert data["status"] in ["queued", "processing"]
+    return data["job_id"]
+
+def test_get_job_status(test_client):
+    """Test getting job status"""
+    # First submit a job
+    job_id = test_process_audio_job(test_client)
+    
+    # Then check its status
+    response = test_client.get(f"/api/jobs/{job_id}")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["job_id"] == job_id
+    assert "status" in data
+    assert "progress" in data
+    assert isinstance(data["progress"], int)
+    assert 0 <= data["progress"] <= 100
+
+def test_get_nonexistent_job_status(test_client):
+    """Test getting status for a non-existent job"""
+    response = test_client.get("/api/jobs/nonexistent-job-id")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+def test_invalid_url_processing(test_client):
+    """Test submitting an invalid URL for processing"""
+    response = test_client.post(
+        "/api/process",
+        json={"url": "not-a-valid-url", "format": TEST_FORMAT}
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+def test_missing_required_fields(test_client):
+    """Test submitting a request with missing required fields"""
+    # Missing URL
+    response = test_client.post(
+        "/api/process",
+        json={"format": TEST_FORMAT}
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    
+    # Missing format
+    response = test_client.post(
+        "/api/process",
+        json={"url": TEST_VIDEO_URL}
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+def test_invalid_http_method(test_client):
+    """Test using an invalid HTTP method"""
+    response = test_client.put("/health")
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+def test_api_documentation_page(test_client):
+    """Test the API documentation page is accessible"""
+    response = test_client.get("/docs/api")
+    assert response.status_code == status.HTTP_200_OK
+    assert "text/html" in response.headers["content-type"]
+    assert "API Documentation" in response.text
 
 def test_health_check(test_client):
     """Test health check endpoint"""

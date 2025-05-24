@@ -31,6 +31,23 @@ if not OPENAI_API_KEY:
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 console = Console()
 
+"""
+JamSplitter - Main application entry point.
+
+This module serves as the entry point for running the JamSplitter application.
+It uses the application factory pattern to create and configure the FastAPI app.
+
+Usage:
+    python -m jamsplitter
+    or
+    uvicorn app.main:app --reload
+"""
+import uvicorn
+from app import create_app
+
+# Create the FastAPI application
+app = create_app()
+
 def main():
     """Initialize the LangChain agent and run a prompt loop."""
     llm = OpenAI(temperature=0)

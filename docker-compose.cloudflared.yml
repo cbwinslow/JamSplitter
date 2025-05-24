@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - jamsplitter_network
+    volumes:
+      - ${HOME}/.cloudflared:/home/nonroot/.cloudflared
+    depends_on:
+      - jam-splitter
+
+networks:
+  jamsplitter_network:
+    external: true
