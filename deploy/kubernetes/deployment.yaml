@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jamsplitter
+  namespace: jamsplitter
+  labels:
+    app: jamsplitter
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: jamsplitter
+  template:
+    metadata:
+      labels:
+        app: jamsplitter
+    spec:
+      containers:
+      - name: jamsplitter
+        image: jamsplitter:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: JAMSPLITTER_ENV
+          value: production
+        - name: JAMSPLITTER_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: jamsplitter-secrets
+              key: database-url
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jamsplitter
+  namespace: jamsplitter
+spec:
+  selector:
+    app: jamsplitter
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer
