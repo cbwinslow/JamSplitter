@@ -39,6 +39,7 @@ ENV/
 .env
 .env.local
 .env.*.local
+.env*
 
 # Project specific
 output_stems/
