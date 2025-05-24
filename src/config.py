@@ -11,17 +11,17 @@ load_dotenv()
 
 class Config:
     """Centralized configuration management."""
-    
+
     def __init__(self, config_path: Optional[str] = None):
         """Initialize configuration.
-        
+
         Args:
             config_path: Optional path to config file
         """
         self.config_path = config_path or os.getenv('JAMSPLITTER_CONFIG', 'config.yaml')
         self.config = self._load_config()
         self._update_from_env()
-    
+
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from YAML file."""
         try:
@@ -29,14 +29,14 @@ class Config:
                 return yaml.safe_load(f) or {}
         except FileNotFoundError:
             return {}
-    
+
     def _update_from_env(self):
         """Update configuration from environment variables."""
         for key, value in os.environ.items():
             if key.startswith('JAMSPLITTER_'):
                 config_key = key[12:].lower()  # Remove JAMSPLITTER_ prefix
                 self.config[config_key] = self._parse_env_value(value)
-    
+
     @staticmethod
     def _parse_env_value(value: str) -> Any:
         """Parse environment variable value to appropriate type."""
@@ -49,15 +49,15 @@ class Config:
                 return float(value)
             except ValueError:
                 return value
-    
+
     def get(self, key: str, default: Any = None) -> Any:
         """Get configuration value."""
         return self.config.get(key, default)
-    
+
     def __getitem__(self, key: str) -> Any:
         """Get configuration value using dict-like access."""
         return self.config[key]
-    
+
     def __contains__(self, key: str) -> bool:
         """Check if key exists in config."""
         return key in self.config

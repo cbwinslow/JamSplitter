@@ -31,7 +31,7 @@ DB_CONFIG = {
 
 class Database:
     """Database operations handler with robust error handling"""
-    
+
     def __init__(self, db_url: str):
         """Initialize database connection"""
         self.db_url: str = db_url
@@ -47,16 +47,16 @@ class Database:
         """Connect to PostgreSQL database with retry logic"""
         max_retries = DB_CONFIG['max_retries']
         retry_delay = DB_CONFIG['retry_delay']
-        
+
         for attempt in range(max_retries):
             try:
-                self.logger.info("Attempting database connection (attempt %d/%d)...", 
+                self.logger.info("Attempting database connection (attempt %d/%d)...",
                            attempt + 1, max_retries)
                 self.conn = psycopg2.connect(self.db_url)
                 self.logger.info("Successfully connected to database")
                 return
             except Exception as e:
-                self.logger.error("Database connection attempt %d failed: %s", 
+                self.logger.error("Database connection attempt %d failed: %s",
                            attempt + 1, str(e))
                 if attempt < max_retries - 1:
                     self.logger.info("Retrying in %d seconds...", retry_delay)
@@ -157,7 +157,7 @@ class Database:
             )
             WHERE id = %s
         """.format(progress['status'])
-        
+
         try:
             self.logger.info("Updating progress for video: %s", video_id)
             self.execute_query(query, {'id': video_id})
@@ -182,7 +182,7 @@ class Database:
             )
             WHERE id = %s
         """.format(progress['status'])
-        
+
         try:
             self.logger.info("Updating progress for video: %s", video_id)
             self.execute_query(query, {'id': video_id})
@@ -199,8 +199,8 @@ class Database:
     def mark_video_downloaded(self, filename: str) -> None:
         """Mark video as downloaded"""
         query = """
-            UPDATE videos 
-            SET download_status = 'completed', 
+            UPDATE videos
+            SET download_status = 'completed',
                 updated_at = CURRENT_TIMESTAMP
             WHERE filename = %s
         """
@@ -255,7 +255,7 @@ class Database:
             )
             WHERE id = %s
         """.format(progress['status'])
-        
+
         try:
             self.execute_query(query, {'id': video_id})
             self.logger.info(f"Updated progress for video {video_id}")

@@ -50,17 +50,17 @@ class StemSeparator:
                     status_code=404,
                     audio_path=audio_path
                 )
-            
+
             # Create output directory
             os.makedirs(output_dir, exist_ok=True)
-            
+
             self.logger.info("Processing audio file: %s", audio_path)
             self.separator.separate_to_file(audio_path, output_dir)
             self.logger.info("Successfully processed audio file: %s", audio_path)
-            
+
             # Get output files
             stems = [f for f in os.listdir(output_dir) if f.endswith('.wav')]
-            
+
             self.logger.info(
                 "Audio separation completed successfully",
                 extra={
@@ -68,7 +68,7 @@ class StemSeparator:
                     "output_dir": output_dir
                 }
             )
-            
+
             return {
                 "status": "success",
                 "stems": stems,
@@ -89,19 +89,19 @@ class StemSeparator:
                 status_code=500,
                 audio_path=audio_path
             )
-    
+
     def process_video(self, video_url: str, output_dir: str, format: str = "mp3") -> Dict[str, Any]:
         """
         Process video and separate audio stems with comprehensive error handling
-        
+
         Args:
             video_url: YouTube video URL
             output_dir: Directory for output stems
             format: Output audio format
-            
+
         Returns:
             Dictionary containing processing results
-            
+
         Raises:
             InvalidURLException: If URL is invalid
             ProcessingError: If video processing fails
@@ -113,7 +113,7 @@ class StemSeparator:
                     video_url,
                     "Invalid YouTube URL format"
                 )
-            
+
             # Download video
             try:
                 audio_path = self._download_video(video_url, format)
@@ -127,10 +127,10 @@ class StemSeparator:
                     status_code=500,
                     video_url=video_url
                 )
-            
+
             # Process audio
             result = self.process_audio(audio_path, output_dir)
-            
+
             return result
         except InvalidURLException:
             raise
@@ -149,18 +149,18 @@ class StemSeparator:
                 status_code=500,
                 video_url=video_url
             )
-    
+
     def _download_video(self, video_url: str, format: str) -> str:
         """
         Download video and extract audio
-        
+
         Args:
             video_url: YouTube video URL
             format: Output audio format
-            
+
         Returns:
             Path to extracted audio file
-            
+
         Raises:
             ProcessingError: If video download fails
         """

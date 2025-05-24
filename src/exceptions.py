@@ -10,7 +10,7 @@ class JamSplitterError(Exception):
     def __init__(self, message: str, status_code: int = 500, **kwargs):
         """
         Initialize a JamSplitter error
-        
+
         Args:
             message: Error message
             status_code: HTTP status code
@@ -25,7 +25,7 @@ class InvalidURLException(JamSplitterError):
     def __init__(self, url: str, message: str = "Invalid YouTube URL"):
         """
         Initialize an invalid URL error
-        
+
         Args:
             url: The invalid URL
             message: Error message
@@ -37,7 +37,7 @@ class ProcessingError(JamSplitterError):
     def __init__(self, message: str, status_code: int = 500, **kwargs):
         """
         Initialize a processing error
-        
+
         Args:
             message: Error message
             status_code: HTTP status code
@@ -50,7 +50,7 @@ class DatabaseError(JamSplitterError):
     def __init__(self, message: str, status_code: int = 500, **kwargs):
         """
         Initialize a database error
-        
+
         Args:
             message: Error message
             status_code: HTTP status code
@@ -63,7 +63,7 @@ class ConfigurationError(JamSplitterError):
     def __init__(self, message: str, status_code: int = 500, **kwargs):
         """
         Initialize a configuration error
-        
+
         Args:
             message: Error message
             status_code: HTTP status code

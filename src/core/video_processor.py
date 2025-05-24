@@ -39,10 +39,10 @@ class VideoProcessor:
 
             # Separate stems
             stem_paths = await self.stem_separator.separate_stems(video_path)
-            
+
             # Generate lyrics
             lyrics = await self.lyrics_generator.generate_lyrics(video_path)
-            
+
             # Update database
             self.db.update_video_stems(video_path, stem_paths)
             self.db.update_video_lyrics(video_path, lyrics)
