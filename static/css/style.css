@@ -1,0 +1,132 @@
+/* style.css ─────────────────────────────────────────────────────────────
+Author : ChatGPT for CBW  ✦ 2025-05-24
+Summary: Custom styles for JamSplitter web interface */
+
+:root {
+    --primary-color: #3B82F6;
+    --secondary-color: #60A5FA;
+    --background-color: #F3F4F6;
+    --text-primary: #1F2937;
+    --text-secondary: #4B5563;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Form styles */
+input[type="url"],
+select {
+    padding: 0.75rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s ease;
+}
+
+input[type="url"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Button styles */
+button {
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Queue item styles */
+.queue-item {
+    transition: all 0.2s ease;
+}
+
+.queue-item:hover {
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Progress bar styles */
+.progress-bar {
+    height: 8px;
+    background-color: #E5E7EB;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+/* Status text styles */
+.status-text {
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+}
+
+.status-completed .status-text {
+    color: #10B981;
+}
+
+.status-failed .status-text {
+    color: #EF4444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .queue-item {
+        padding: 1rem;
+    }
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.processing .status-text {
+    animation: pulse 2s infinite;
+}

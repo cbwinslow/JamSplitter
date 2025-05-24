@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JamSplitter - Audio Stem Separator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-background min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">JamSplitter</h1>
+            <p class="text-gray-600">Audio Stem Separator with GPU Acceleration</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto">
+            <!-- Processing Queue -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">Processing Queue</h2>
+                <div id="queue" class="space-y-4">
+                    <!-- Queue items will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Processing Form -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <form id="processForm" class="space-y-4">
+                    <div>
+                        <label for="url" class="block text-sm font-medium text-gray-700">YouTube URL</label>
+                        <input type="url" id="url" name="url" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    </div>
+
+                    <div>
+                        <label for="format" class="block text-sm font-medium text-gray-700">Output Format</label>
+                        <select id="format" name="format" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                            <option value="mp3">MP3</option>
+                            <option value="wav">WAV</option>
+                            <option value="flac">FLAC</option>
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                        Process Video
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

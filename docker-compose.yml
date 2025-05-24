@@ -1,53 +1,111 @@
+# Docker Compose configuration for JamSplitter
+# Version 3.8 of the Docker Compose file format
 version: "3.8"
 
+# Define all services in the application
 services:
+  # Main CPU-based service
   jam-splitter:
+    # Build the service from the current directory
     build: .
+    # Use the latest tag for the image
     image: jam-splitter-agent:latest
+    # Environment variables
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+    # Mount volumes for persistent storage
     volumes:
+      # Mount output directory for processed stems
       - ./output_stems:/home/agentuser/app/output_stems
+      # Mount cache database
       - ./cache.db:/home/agentuser/app/cache.db
+    # Enable interactive mode
     tty: true
     stdin_open: true
 
+  # NVIDIA GPU-accelerated service
   jam-splitter-nvidia:
+    # Build with CUDA support
     build:
       context: .
       dockerfile: Dockerfile.cuda
+    # Use CUDA-enabled image
     image: jam-splitter-agent:cuda
+    # Enable NVIDIA runtime
     runtime: nvidia
+    # Environment variables
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+    # Mount volumes
     volumes:
       - ./output_stems:/home/agentuser/app/output_stems
       - ./cache.db:/home/agentuser/app/cache.db
+    # Enable interactive mode
     tty: true
     stdin_open: true
 
+  # AMD GPU-accelerated service
   jam-splitter-amd:
+    # Build with ROCm support
     build:
       context: .
       dockerfile: Dockerfile.rocm
+    # Use ROCm-enabled image
     image: jam-splitter-agent:rocm
+    # Environment variables
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+    # Mount volumes
     volumes:
       - ./output_stems:/home/agentuser/app/output_stems
       - ./cache.db:/home/agentuser/app/cache.db
+    # Enable interactive mode
     tty: true
     stdin_open: true
 
+  # FastAPI web service
   jam-splitter-api:
+    # Build from source
     build: .
+    # Use API-specific image
     image: jam-splitter-agent:api
+    # Run FastAPI server
     command: uvicorn app:app --host 0.0.0.0 --port 8000
+    # Expose port 8000
     ports:
       - "8000:8000"
+    # Environment variables
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+    # Mount source code
     volumes:
       - .:/home/agentuser/app
+
+  # PostgreSQL database service
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Redis cache service
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+# Volume definitions for persistent storage
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
     tty: true
     stdin_open: true
