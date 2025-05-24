@@ -6,7 +6,7 @@ We would like to thank the following people for their contributions to the JamSp
 
 - [Your Name](https://github.com/yourusername) - Project Lead
 
-## Contributors
+## Community Contributors
 
 - [Contributor Name](https://github.com/contributor) - Description of contribution
 

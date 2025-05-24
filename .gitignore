@@ -28,7 +28,9 @@ ENV/
 
 # IDE specific files
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/cspell.json
 *.swp
 *.swo
 *~

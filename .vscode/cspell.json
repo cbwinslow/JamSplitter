@@ -1,0 +1,24 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "jamsplitter",
+    "pyproject",
+    "PYTHONUNBUFFERED",
+    "cuda",
+    "rocm",
+    "uvicorn",
+    "healthcheck",
+    "isready",
+    "appendonly"
+  ],
+  "flagWords": [],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/venv/**",
+    "**/.venv/**",
+    "**/.git/**",
+    "**/*.min.*",
+    "**/dist/**"
+  ]
+}

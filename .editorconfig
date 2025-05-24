@@ -31,7 +31,7 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
-# Makefiles use tabs
+# Makefiles use tabs (explicit section for Makefiles)
 [Makefile]
 indent_style = tab
 
