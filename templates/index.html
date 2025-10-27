@@ -183,7 +183,7 @@
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <p class="text-gray-500 text-sm">
-                    &copy; 2025 JamSplitter. All rights reserved.
+                    &copy; <span id="current-year">2025</span> JamSplitter. All rights reserved.
                 </p>
                 <p class="text-gray-400 text-xs mt-2">
                     Powered by AI and built with ❤️
@@ -198,5 +198,9 @@
     </div>
 
     <script src="/static/js/app.js"></script>
+    <script>
+        // Set current year dynamically
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

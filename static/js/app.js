@@ -9,6 +9,12 @@ const SPLIT_ENDPOINT = '/split';
 const QUEUE_ENDPOINT = '/queue';
 
 // Utility Functions
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -20,16 +26,26 @@ function showToast(message, type = 'info') {
     };
     
     toast.className = `${bgColors[type]} text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 opacity-0 translate-x-full`;
-    toast.innerHTML = `
-        <div class="flex items-center">
-            <span>${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
+    
+    // Create elements safely without innerHTML
+    const flexDiv = document.createElement('div');
+    flexDiv.className = 'flex items-center';
+    
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;  // Using textContent prevents XSS
+    
+    const closeButton = document.createElement('button');
+    closeButton.className = 'ml-4 text-white hover:text-gray-200';
+    closeButton.onclick = function() { toast.remove(); };
+    closeButton.innerHTML = `
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
     `;
+    
+    flexDiv.appendChild(messageSpan);
+    flexDiv.appendChild(closeButton);
+    toast.appendChild(flexDiv);
     
     container.appendChild(toast);
     
@@ -70,27 +86,62 @@ class QueueItem {
     createElement() {
         const item = document.createElement('div');
         item.className = 'border border-gray-200 rounded-lg p-4 transition-all hover:shadow-md';
-        item.innerHTML = `
-            <div class="flex justify-between items-start mb-3">
-                <div class="flex-1 mr-4">
-                    <p class="text-sm font-medium text-gray-900 break-all">${this.url}</p>
-                    <p class="text-xs text-gray-500 mt-1">Format: ${this.format.toUpperCase()}</p>
-                </div>
-                <span class="status-badge px-3 py-1 rounded-full text-xs font-medium ${this.getStatusClass()}">
-                    ${this.status}
-                </span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${this.progress * 100}%"></div>
-            </div>
-            <div class="flex justify-between items-center mt-2">
-                <span class="text-xs text-gray-500 progress-text">${Math.round(this.progress * 100)}%</span>
-                <button class="remove-btn text-xs text-red-600 hover:text-red-800" style="display: none;">Remove</button>
-            </div>
-        `;
+        
+        // Create structure safely without innerHTML to prevent XSS
+        const flexDiv = document.createElement('div');
+        flexDiv.className = 'flex justify-between items-start mb-3';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'flex-1 mr-4';
+        
+        const urlPara = document.createElement('p');
+        urlPara.className = 'text-sm font-medium text-gray-900 break-all';
+        urlPara.textContent = this.url;  // Safe - prevents XSS
+        
+        const formatPara = document.createElement('p');
+        formatPara.className = 'text-xs text-gray-500 mt-1';
+        formatPara.textContent = `Format: ${this.format.toUpperCase()}`;
+        
+        contentDiv.appendChild(urlPara);
+        contentDiv.appendChild(formatPara);
+        
+        const statusBadge = document.createElement('span');
+        statusBadge.className = `status-badge px-3 py-1 rounded-full text-xs font-medium ${this.getStatusClass()}`;
+        statusBadge.textContent = this.status;
+        
+        flexDiv.appendChild(contentDiv);
+        flexDiv.appendChild(statusBadge);
+        
+        // Progress bar
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        const progressFill = document.createElement('div');
+        progressFill.className = 'progress-fill';
+        progressFill.style.width = `${this.progress * 100}%`;
+        progressBar.appendChild(progressFill);
+        
+        // Bottom controls
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'flex justify-between items-center mt-2';
+        
+        const progressText = document.createElement('span');
+        progressText.className = 'text-xs text-gray-500 progress-text';
+        progressText.textContent = `${Math.round(this.progress * 100)}%`;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn text-xs text-red-600 hover:text-red-800';
+        removeBtn.style.display = 'none';
+        removeBtn.textContent = 'Remove';
+        
+        controlsDiv.appendChild(progressText);
+        controlsDiv.appendChild(removeBtn);
+        
+        // Assemble the element
+        item.appendChild(flexDiv);
+        item.appendChild(progressBar);
+        item.appendChild(controlsDiv);
         
         // Add remove button functionality
-        const removeBtn = item.querySelector('.remove-btn');
         removeBtn.addEventListener('click', () => this.remove());
         
         return item;
@@ -133,6 +184,8 @@ class QueueItem {
     }
 
     startPolling() {
+        // TODO: Replace with real API polling when backend processing is implemented
+        // Currently simulating progress for demonstration purposes
         // Simulate progress for demo purposes
         let simulatedProgress = 0;
         this.progressInterval = setInterval(() => {

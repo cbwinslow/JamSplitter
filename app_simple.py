@@ -57,8 +57,13 @@ async def health():
 async def split(req: SplitRequest):
     """Process a YouTube video and separate its stems"""
     try:
+        # Validate and sanitize URL
+        url = req.url.strip()
+        if not url or len(url) > 2000:  # Basic validation
+            raise HTTPException(status_code=400, detail="Invalid URL")
+        
         # Add to processing queue
-        processing_queue[req.url] = ProcessingStatus(
+        processing_queue[url] = ProcessingStatus(
             status="queued",
             progress=0.0,
             updated_at=datetime.now().isoformat()
@@ -67,7 +72,7 @@ async def split(req: SplitRequest):
         # Return immediate response
         return {
             "message": "Added to processing queue",
-            "url": req.url,
+            "url": url,
             "format": req.format
         }
     except Exception as e:
