@@ -20,6 +20,27 @@ JamSplitter is a powerful tool for splitting music tracks into individual stems 
 
 ## 🚀 Quick Start
 
+### Web Interface (Simplest Method)
+
+The easiest way to try JamSplitter is to use the standalone web interface:
+
+```bash
+# Install minimal dependencies
+pip install fastapi uvicorn pydantic-settings
+
+# Run the web application
+python app_simple.py
+
+# Open your browser to http://localhost:8000
+```
+
+The web interface provides:
+- Modern, professional UI
+- Real-time processing queue with progress tracking
+- Toast notifications for user feedback
+- Multiple output format support (MP3, WAV, FLAC)
+- YouTube URL processing
+
 ### Prerequisites
 
 - Python 3.11 or higher
