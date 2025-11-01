@@ -1,0 +1,442 @@
+/**
+ * Button Component - Secure, Reusable, Animated Button System
+ * 
+ * Features:
+ * - Multiple variants (primary, secondary, tertiary, danger)
+ * - Loading states with spinner
+ * - Disabled states
+ * - Icon support
+ * - Ripple animation effect
+ * - Debounce protection against double-clicks
+ * - Full keyboard accessibility
+ * - Success/error state transitions
+ */
+
+/* =============================================================================
+   Base Button Styles
+   ============================================================================= */
+
+.btn {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  
+  /* Typography */
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  /* Spacing */
+  padding: var(--spacing-3) var(--spacing-6);
+  
+  /* Appearance */
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  
+  /* Transitions */
+  transition: all var(--transition-base);
+  
+  /* Focus */
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Button Sizes */
+.btn--xs {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+}
+
+.btn--sm {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-md);
+}
+
+.btn--md {
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--text-base);
+}
+
+.btn--lg {
+  padding: var(--spacing-4) var(--spacing-8);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-xl);
+}
+
+.btn--xl {
+  padding: var(--spacing-5) var(--spacing-10);
+  font-size: var(--text-xl);
+  border-radius: var(--radius-2xl);
+}
+
+/* =============================================================================
+   Button Variants
+   ============================================================================= */
+
+/* Primary Button - Gradient with shadow */
+.btn--primary {
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
+  color: white;
+  box-shadow: var(--shadow-primary);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-600) 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+/* Secondary Button - Purple gradient */
+.btn--secondary {
+  background: linear-gradient(135deg, var(--color-secondary-600) 0%, var(--color-secondary-500) 100%);
+  color: white;
+  box-shadow: var(--shadow-secondary);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-secondary-700) 0%, var(--color-secondary-600) 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn--secondary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+/* Tertiary/Ghost Button - Outlined */
+.btn--tertiary {
+  background: transparent;
+  color: var(--color-primary-600);
+  border: 2px solid var(--color-primary-300);
+  box-shadow: none;
+}
+
+.btn--tertiary:hover:not(:disabled) {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-500);
+  transform: translateY(-2px);
+}
+
+.btn--tertiary:active:not(:disabled) {
+  background: var(--color-primary-100);
+  transform: translateY(0);
+}
+
+[data-theme="dark"] .btn--tertiary {
+  color: var(--color-primary-400);
+  border-color: var(--color-primary-700);
+}
+
+[data-theme="dark"] .btn--tertiary:hover:not(:disabled) {
+  background: var(--color-primary-900);
+  border-color: var(--color-primary-500);
+}
+
+/* Danger Button - Red gradient */
+.btn--danger {
+  background: linear-gradient(135deg, var(--color-error-600) 0%, var(--color-error-500) 100%);
+  color: white;
+  box-shadow: var(--shadow-error);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-error-700) 0%, var(--color-error-600) 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn--danger:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+/* Success Button - Green gradient */
+.btn--success {
+  background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-500) 100%);
+  color: white;
+  box-shadow: var(--shadow-success);
+}
+
+.btn--success:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-success-700) 0%, var(--color-success-600) 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn--success:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+/* Ghost/Link Button */
+.btn--ghost {
+  background: transparent;
+  color: var(--color-primary-600);
+  box-shadow: none;
+  padding: var(--spacing-2) var(--spacing-4);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--color-primary-50);
+}
+
+.btn--ghost:active:not(:disabled) {
+  background: var(--color-primary-100);
+}
+
+[data-theme="dark"] .btn--ghost {
+  color: var(--color-primary-400);
+}
+
+[data-theme="dark"] .btn--ghost:hover:not(:disabled) {
+  background: var(--color-primary-900);
+}
+
+/* =============================================================================
+   Button States
+   ============================================================================= */
+
+/* Disabled State */
+.btn:disabled,
+.btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+}
+
+/* Loading State */
+.btn--loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+.btn--loading .btn__icon,
+.btn--loading .btn__text {
+  opacity: 0;
+}
+
+/* State Transition Classes */
+.btn--state-success {
+  background: var(--color-success-500) !important;
+  animation: scaleIn var(--transition-base);
+}
+
+.btn--state-error {
+  background: var(--color-error-500) !important;
+  animation: scaleIn var(--transition-base);
+}
+
+/* =============================================================================
+   Button Icons
+   ============================================================================= */
+
+.btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25em;
+  height: 1.25em;
+  transition: transform var(--transition-fast);
+}
+
+.btn__icon--leading {
+  margin-right: calc(var(--spacing-2) * -1);
+}
+
+.btn__icon--trailing {
+  margin-left: calc(var(--spacing-2) * -1);
+}
+
+.btn:hover:not(:disabled) .btn__icon {
+  transform: scale(1.1);
+}
+
+/* Icon-only buttons */
+.btn--icon-only {
+  padding: var(--spacing-3);
+  aspect-ratio: 1;
+}
+
+.btn--icon-only.btn--sm {
+  padding: var(--spacing-2);
+}
+
+.btn--icon-only.btn--lg {
+  padding: var(--spacing-4);
+}
+
+/* =============================================================================
+   Ripple Effect
+   ============================================================================= */
+
+.btn__ripple {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  from {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  to {
+    width: 400px;
+    height: 400px;
+    opacity: 0;
+  }
+}
+
+/* =============================================================================
+   Button Groups
+   ============================================================================= */
+
+.btn-group {
+  display: inline-flex;
+  gap: var(--spacing-2);
+}
+
+.btn-group--attached {
+  gap: 0;
+}
+
+.btn-group--attached .btn {
+  border-radius: 0;
+}
+
+.btn-group--attached .btn:first-child {
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.btn-group--attached .btn:last-child {
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.btn-group--attached .btn:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-group--vertical {
+  flex-direction: column;
+}
+
+.btn-group--vertical.btn-group--attached .btn {
+  border-radius: 0;
+}
+
+.btn-group--vertical.btn-group--attached .btn:first-child {
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.btn-group--vertical.btn-group--attached .btn:last-child {
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.btn-group--vertical.btn-group--attached .btn:not(:last-child) {
+  border-right: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* =============================================================================
+   Full Width Button
+   ============================================================================= */
+
+.btn--full-width {
+  width: 100%;
+}
+
+/* =============================================================================
+   Responsive Adjustments
+   ============================================================================= */
+
+@media (max-width: 640px) {
+  .btn {
+    font-size: var(--text-sm);
+    padding: var(--spacing-2) var(--spacing-4);
+  }
+  
+  .btn--lg {
+    font-size: var(--text-base);
+    padding: var(--spacing-3) var(--spacing-6);
+  }
+}
+
+/* =============================================================================
+   Accessibility Enhancements
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn__icon,
+  .btn__ripple {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .btn:hover:not(:disabled) {
+    transform: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* =============================================================================
+   Print Styles
+   ============================================================================= */
+
+@media print {
+  .btn {
+    display: none;
+  }
+}
