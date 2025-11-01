@@ -94,3 +94,27 @@ static/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Cloudflare
+.wrangler/
+wrangler.toml.backup
+node_modules/
+.dev.vars
+
+# Frontend build
+dist/
+.cache/
+.parcel-cache/
+
+# Audio files
+*.mp3
+*.wav
+*.flac
+*.ogg
+*.m4a
+*.aac
+
+# Temporary files
+tmp/
+temp/
+*.tmp
