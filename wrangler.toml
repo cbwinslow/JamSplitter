@@ -1,0 +1,97 @@
+name = "jamsplitter"
+main = "cloudflare/workers/index.ts"
+compatibility_date = "2024-01-01"
+node_compat = true
+
+# Account details (set via wrangler login or environment variables)
+# account_id = ""
+# workers_dev = true
+
+[env.production]
+name = "jamsplitter-production"
+route = "jamsplitter.com/*"
+zone_id = ""
+
+[env.staging]
+name = "jamsplitter-staging"
+route = "staging.jamsplitter.com/*"
+
+# Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "jamsplitter-db"
+database_id = ""
+migrations_dir = "cloudflare/schema"
+
+[[d1_databases.env.staging]]
+binding = "DB"
+database_name = "jamsplitter-db-staging"
+database_id = ""
+
+# Cloudflare R2 Storage
+[[r2_buckets]]
+binding = "AUDIO_UPLOADS"
+bucket_name = "jamsplitter-uploads"
+preview_bucket_name = "jamsplitter-uploads-preview"
+
+[[r2_buckets]]
+binding = "AUDIO_PROCESSED"
+bucket_name = "jamsplitter-processed"
+preview_bucket_name = "jamsplitter-processed-preview"
+
+[[r2_buckets]]
+binding = "PRESETS"
+bucket_name = "jamsplitter-presets"
+preview_bucket_name = "jamsplitter-presets-preview"
+
+# Cloudflare KV (for caching and sessions)
+[[kv_namespaces]]
+binding = "CACHE"
+id = ""
+preview_id = ""
+
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = ""
+preview_id = ""
+
+# Cloudflare Queues (for async job processing)
+[[queues.producers]]
+binding = "AUDIO_QUEUE"
+queue = "audio-processing"
+
+[[queues.consumers]]
+queue = "audio-processing"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+dead_letter_queue = "audio-processing-dlq"
+
+# Durable Objects (for real-time features)
+[[durable_objects.bindings]]
+name = "AUDIO_SESSION"
+class_name = "AudioSession"
+script_name = "jamsplitter"
+
+# AI Binding (for Cloudflare AI)
+[ai]
+binding = "AI"
+
+# Limits and settings
+[limits]
+cpu_ms = 50
+
+# Environment variables (secrets should be set via wrangler secret put)
+[vars]
+ENVIRONMENT = "development"
+LOG_LEVEL = "info"
+MAX_FILE_SIZE = "104857600"  # 100MB
+MAX_PROCESSING_TIME = "300"  # 5 minutes
+ALLOWED_AUDIO_FORMATS = "mp3,wav,flac,ogg,m4a,aac"
+
+[build]
+command = "npm run build"
+watch_dirs = ["cloudflare/workers", "frontend"]
+
+[build.upload]
+format = "service-worker"
